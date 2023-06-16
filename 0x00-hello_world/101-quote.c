@@ -1,12 +1,16 @@
-#include <stdio.h>
-#include <unistd.h>
+#include<unistd.h>
+
 /**
- * main - print exactly "and that piece of art is useful"
- * - Dora Korpar, 2015-10-19",
- *   Return: 0 (Sucess)
- */
+ * main - Entry point
+ * Description: print a quote using write function
+ *
+ * Return: return an error 1.
+*/
+
 int main(void)
 {
-	write("and that piece of art is useful\" - Dora Korpar, 2015-10-19\n", 59);
-	Return (1);
+	char quo[] = "and that piece of art is useful\" - Dora Korpar, 2015-10-19\n";
+
+	write(1, quo, 59);
+	return (1);
 }
