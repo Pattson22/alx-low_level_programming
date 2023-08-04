@@ -22,5 +22,5 @@ void print_binary(unsigned long int n)
 	}
 
 	if (!flag)
-		_putchar((n & mask) ? '1' : '0');
+		_putchar('0');
 }
