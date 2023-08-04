@@ -18,10 +18,10 @@ void print_binary(unsigned long int n)
 		_putchar('0');
 	else
 	{
-		for (bit_count--; bit_count >= 0; bit_count--)
-		{
-			mask = 1 << bit_count;
-			_putchar((n & mask) ? '1' : '0');
+	for (bit_count--; bit_count >= 0; bit_count--)
+	{
+	mask = 1 << bit_count;
+		_putchar((n & mask) ? '1' : '0');
 		}
 	}
 }
