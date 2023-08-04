@@ -6,21 +6,22 @@
  */
 void print_binary(unsigned long int n)
 {
+	int bit_count = 0;
 	unsigned long int mask = 1;
-	int size = sizeof(unsigned long int) * 8;
-	int flag = 0;
 
-	while (size--)
-	{
-		if ((n >> size) & 1)
-			flag = 1;
+	/* Count the number of bits in the number */
+	while ((n >> bit_count) > 0)
+		bit_count++;
 
-		if (flag)
-			_putchar((n & mask) ? '1' : '0');
-
-		mask <<= 1;
-	}
-
-	if (!flag)
+	/* Print the binary representation */
+	if (bit_count == 0)
 		_putchar('0');
+	else
+	{
+		for (bit_count--; bit_count >= 0; bit_count--)
+		{
+			mask = 1 << bit_count;
+			_putchar((n & mask) ? '1' : '0');
+		}
+	}
 }
