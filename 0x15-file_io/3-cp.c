@@ -7,7 +7,7 @@
  * @file_to: File descriptor of the destination file.
  * @argv: Arguments vector.
  *
- * Return: No return.
+ * Return: Always 0.
  */
 void error_file(int file_from, int file_to, char *argv[])
 {
