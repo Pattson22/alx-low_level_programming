@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <elf.h>
+
+void print_error(const char *message);
+void print_elf_header_info(const Elf64_Ehdr *header);
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        print_error("Usage: elf_header elf_filename");
+        return 98;
+    }
+
+    int fd = open(argv[1], O_RDONLY);
+    if (fd == -1) {
+        print_error("Error: Cannot open ELF file");
+        return 98;
+    }
+
+    Elf64_Ehdr header;
+    ssize_t n = read(fd, &header, sizeof(Elf64_Ehdr));
+    if (n == -1) {
+        print_error("Error: Cannot read ELF header");
+        close(fd);
+        return 98;
+    }
+
+    if (header.e_ident[EI_MAG0] != ELFMAG0 || header.e_ident[EI_MAG1] != ELFMAG1 ||
+        header.e_ident[EI_MAG2] != ELFMAG2 || header.e_ident[EI_MAG3] != ELFMAG3) {
+        print_error("Error: Not an ELF file");
+        close(fd);
+        return 98;
+    }
+
+    print_elf_header_info(&header);
+
+    close(fd);
+    return 0;
+}
+
+void print_error(const char *message) {
+    fprintf(stderr, "%s\n", message);
+}
+
+void print_elf_header_info(const Elf64_Ehdr *header) {
+    printf("ELF Header:\n");
+    printf("  Magic:   ");
+    for (int i = 0; i < EI_NIDENT; i++) {
+        printf("%02x", header->e_ident[i]);
+        if (i < EI_NIDENT - 1) {
+            printf(" ");
+        } else {
+            printf("\n");
+        }
+    }
+    printf("  Class:                             %s\n",
+           (header->e_ident[EI_CLASS] == ELFCLASS64) ? "ELF64" : "ELF32");
+    printf("  Data:                              %s\n",
+           (header->e_ident[EI_DATA] == ELFDATA2LSB) ?
+           "2's complement, little endian" : "2's complement, big endian");
+    printf("  Version:                           %d (current)\n",
+           header->e_ident[EI_VERSION]);
+    printf("  OS/ABI:                            UNIX - %s\n",
+           header->e_ident[EI_OSABI] == ELFOSABI_SYSV ? "System V" :
+           header->e_ident[EI_OSABI] == ELFOSABI_HPUX ? "HP-UX" :
+           header->e_ident[EI_OSABI] == ELFOSABI_NETBSD ? "NetBSD" :
+           header->e_ident[EI_OSABI] == ELFOSABI_LINUX ? "Linux" :
+           header->e_ident[EI_OSABI] == ELFOSABI_SOLARIS ? "Solaris" :
+           header->e_ident[EI_OSABI] == ELFOSABI_IRIX ? "IRIX" :
+           header->e_ident[EI_OSABI] == ELFOSABI_FREEBSD ? "FreeBSD" :
+           header->e_ident[EI_OSABI] == ELFOSABI_TRU64 ? "TRU64" :
+           header->e_ident[EI_OSABI] == ELFOSABI_ARM ? "ARM" :
+           header->e_ident[EI_OSABI] == ELFOSABI_STANDALONE ? "Standalone App" :
+           "<unknown>");
+    printf("  ABI Version:                       %d\n",
+           header->e_ident[EI_ABIVERSION]);
+    printf("  Type:                              %s\n",
+           (header->e_type == ET_NONE) ? "NONE (None)" :
+           (header->e_type == ET_REL) ? "REL (Relocatable file)" :
+           (header->e_type == ET_EXEC) ? "EXEC (Executable file)" :
+           (header->e_type == ET_DYN) ? "DYN (Shared object file)" :
+           (header->e_type == ET_CORE) ? "CORE (Core file)" : "<unknown>");
+    printf("  Entry point address:               %#lx\n",
+           header->e_entry);
+}
