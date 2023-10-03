@@ -14,5 +14,6 @@ int open_source_file(const char *source_filename);
 int open_destination_file(const char *destination_filename);
 int copy_file_contents(int source_fd, int destination_fd);
 int create_file(const char *filename, char *text_content);
+int append_text_to_file(const char *filename, char *text_content);
 
 #endif /* MAIN_H */
