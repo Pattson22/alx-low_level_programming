@@ -15,5 +15,5 @@ int open_destination_file(const char *destination_filename);
 int copy_file_contents(int source_fd, int destination_fd);
 int create_file(const char *filename, char *text_content);
 int append_text_to_file(const char *filename, char *text_content);
-
+ssize_t read_textfile(const char *filename, size_t letters);
 #endif /* MAIN_H */
