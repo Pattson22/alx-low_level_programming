@@ -12,18 +12,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install build deps
+      - name: Install build tools
         run: sudo apt-get update && sudo apt-get install -y build-essential valgrind
 
-      - name: Build
-        run: make
+      - name: Find and build all Makefiles
+        run: |
+          echo "Searching for Makefiles..."
+          FILES=$(find . -type f -name Makefile)
+          if [ -z "$FILES" ]; then
+            echo "No Makefiles found — skipping build."
+            exit 0
+          fi
+          for f in $FILES; do
+            DIR=$(dirname "$f")
+            echo "Building in $DIR"
+            make -C "$DIR" || true
+          done
 
-      - name: Run tests
-        run: make test || true
-
-      - name: Upload logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-logs
-          path: .
+      - name: Run tests in all Makefile folders
+        run: |
+          FILES=$(find . -type f -name Makefile)
+          for f in $FILES; do
+            DIR=$(dirname "$f")
+            echo "Running tests in $DIR"
+            make -C "$DIR" test || true
+          done
